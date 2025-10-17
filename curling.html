@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+速度を入力して，実行(2回目以降は再開)を押してね。回数は3回まで。
+<form name="game">
+vx:<input type="text" name="textbox" size="2" value="3">(m/s)
+vy:<input type="text" name="textbox1" size="2" value="2">(m/s)
+
+<input type="button" name="button1" value="実行" onclick="mycheck()"> 
+<br>
+
+</form>
+
+<canvas id ="canvas" width="700" height="700">
+</canvas>
+
+<script>
+
+var canvas =document.getElementById("canvas");
+const alpha=1.0e2;
+
+//描画に関する定数*************************************
+const wl=30;
+const width=450;
+const hd=canvas.height-10;
+//描画に関する定数*************************************
+
+
+//運動に関する変数や定数******************************
+
+let vx=3.0e0*alpha;
+let vy=-2.0e0*alpha;
+let point=0;
+let count=0;
+let count2=1;
+let e=1.00e0;
+let ax=0.0e0;
+let ay=0.0e0;
+const r=10;
+const g=9.8*alpha//gravitational acceleration
+const mu=0.5;
+let x0=wl+width/2;
+let y0=canvas.height-30;
+let dt=2.5e-4;
+let r1;
+let r2;
+let r3;
+let r4;
+
+let x1;
+let y1;
+
+
+//******初期値***********************************
+let t=0;
+let x=x0;
+let y=y0;
+//******初期値***********************************
+
+
+//運動に関する変数や定数******************************
+
+var ctx = canvas.getContext("2d");
+
+frame();
+
+//要素（円)を描画する。**************************
+ctx.beginPath();
+ctx.arc(x,y,10,0,Math.PI*2, true);
+ctx.fillStyle = 'rgb(0,0,0)';
+ctx.fill();
+//要素（円)を描画する。**************************
+
+
+
+
+//main********************************************
+function mycheck() {
+t=0;
+count=count+1;
+animation();
+
+}
+//main********************************************
+
+
+
+
+//frame()***************************
+function frame(){
+
+ctx.beginPath();
+ctx.lineWidth = 7;
+ctx.moveTo(0,0);
+ctx.lineTo(canvas.width,0);
+ctx.lineTo(canvas.width,canvas.height);
+ctx.lineTo(0,canvas.height);
+ctx.closePath();
+ctx.stroke();
+
+
+ctx.beginPath();
+ctx.lineWidth = 3;
+ctx.moveTo(wl,0);
+ctx.lineTo(wl,canvas.height);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.lineTo(wl+width,0);
+ctx.lineTo(wl+width,canvas.height);
+ctx.stroke();
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0);
+ctx.lineTo(wl+width+5,y0);
+ctx.stroke();
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0);
+ctx.lineTo(wl+5,y0);
+ctx.stroke();
+
+ctx.font = "bold 23px 'ＭＳ 明朝'";
+let s1="0";
+let w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0+10);
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-100);
+ctx.lineTo(wl+5,y0-100);
+ctx.stroke()
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-100);
+ctx.lineTo(wl+width+5,y0-100);
+ctx.stroke()
+
+
+s1="1";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-90);
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-200);
+ctx.lineTo(wl+5,y0-200);
+ctx.stroke()
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-200);
+ctx.lineTo(wl+width+5,y0-200);
+ctx.stroke()
+
+ctx.stroke()
+s1="2";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-190);
+
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-300);
+ctx.lineTo(wl+5,y0-300);
+ctx.stroke()
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-300);
+ctx.lineTo(wl+width+5,y0-300);
+ctx.stroke()
+
+s1="3";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-290);
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-400);
+ctx.lineTo(wl+5,y0-400);
+ctx.stroke()
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-400);
+ctx.lineTo(wl+width+5,y0-400);
+ctx.stroke()
+
+s1="4";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-390);
+
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-500);
+ctx.lineTo(wl+5,y0-500);
+ctx.stroke()
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-500);
+ctx.lineTo(wl+width+5,y0-500);
+ctx.stroke()
+
+s1="5";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-490);
+
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl-5,y0-600);
+ctx.lineTo(wl+5,y0-600);
+ctx.stroke()
+ctx.beginPath();
+ctx.lineWidth = 1;
+ctx.moveTo(wl+width-5,y0-600);
+ctx.lineTo(wl+width+5,y0-600);
+ctx.stroke()
+
+s1="6";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-590);
+
+
+
+s1="(m)";
+w1=ctx.measureText(s1).width;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s1,(wl-w1)/2,y0-640);
+
+
+
+let x2=wl+width+25;
+let y2=60;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.font = "bold 25px 'ＭＳ 明朝'";
+ctx.fillText("回数:"+count2+ "回目",x2,y2);
+
+
+y2=100;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("点数"+ point +"点",x2,y2);
+
+
+y2=140;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("反発係数e=" + e ,x2,y2);
+
+
+
+y2=180;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("x:" +  Math.floor((x-x0)*100/alpha)/100+"(m)",x2,y2);
+
+y2=220;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("y:" + Math.floor((y0-y)*100/alpha)/100 +"(m)",x2,y2);
+
+y2=260;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("動摩擦係数:" + mu ,x2,y2);
+
+y2=300;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("vx:" + Math.floor(vx/alpha*10)/10 +"(m/s)",x2,y2);
+
+
+y2=340;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("vy:" + Math.floor(-vy/alpha*10)/10 +"(m/s)",x2,y2);
+
+
+y2=380;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText("t:" + Math.ceil(t*100)/100 +"(s)",x2,y2);
+
+
+r1=100;
+r2=70;
+r3=40;
+r4=20;
+
+x1=x0;
+y1=170;
+
+//的*********************
+
+ctx.beginPath();
+ctx.fillStyle="blue"; 
+ctx.arc(x1,y1,r1,0,2*Math.PI,true);
+ctx.fill();
+
+ctx.beginPath();
+ctx.fillStyle="white"; 
+ctx.arc(x1,y1,r2,0,2*Math.PI,true);
+ctx.fill();
+
+ctx.beginPath();
+ctx.fillStyle="red"; 
+ctx.arc(x1,y1,r3,0,2*Math.PI,true);
+ctx.fill();
+
+ctx.beginPath();
+ctx.fillStyle="white"; 
+ctx.arc(x1,y1,r4,0,2*Math.PI,true);
+ctx.fill();
+
+ctx.font = "bold 25px 'ＭＳ 明朝'";
+ctx.globalAlpha=0.6;
+let s="100";
+let w =ctx.measureText(s).width;
+let x10=x1-w/2;
+let y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+
+s="50";
+w=ctx.measureText(s).width;
+x10=x1-(r4+r3+w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+
+s="50";
+w=ctx.measureText(s).width;
+x10=x1+(r4+r3-w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+
+s="30";
+w=ctx.measureText(s).width;
+x10=x1+(r3+r2-w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+s="30";
+w=ctx.measureText(s).width;
+x10=x1-(r3+r2+w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+
+s="10";
+w=ctx.measureText(s).width;
+x10=x1-(r1+r2+w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+
+s="10";
+w=ctx.measureText(s).width;
+x10=x1+(r1+r2-w)/2;
+y10=y1+9;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x10,y10);
+ctx.globalAlpha=1.0;
+
+
+
+}
+//frame()***************************
+
+//animation()***************************
+function animation(){
+if(count==1){
+vx=game.textbox.value*alpha;
+vy=game.textbox1.value*(-alpha);
+}
+
+if(count%2==0){ 
+document.game.button1.value="再開";
+clearInterval(myInterval);
+}else{
+document.game.button1.value="停止";
+myInterval=setInterval(render, dt);
+}
+
+}
+//animation()***************************
+
+//render()***************************
+
+function render(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+frame();
+
+//collision********************************
+
+//右端の衝突
+if (x > (wl+width)- r) {
+x= ((wl+width) -r) - (x - ((wl+width) -r))*e;
+vx=-e*vx; 
+}
+//左端の衝突
+if (x < wl+r) {
+x= (wl+r) - (x - (wl+r))*e;
+vx=-e*vx;
+}
+
+//下端の衝突
+if (y > hd-r) {
+y= (hd -r) -( y- ( hd - r ) )*e;
+vy=-e*vy;
+}
+//上端の衝突
+if (y <  r) {
+y= r -( y - r)*e;
+vy=-e*vy; 
+
+}
+//collision********************************
+ax=-g*mu*(vx/Math.sqrt(vx*vx+vy*vy));
+ay=-g*mu*(vy/Math.sqrt(vx*vx+vy*vy));
+
+t=t+dt;
+
+x=x+vx*dt;
+y=y+vy*dt;
+
+
+if(Math.sqrt(vx*vx+vy*vy)/alpha<2.5e-2)
+{
+count2=count2+1;
+
+vx=0.0e0;
+vy=0.0e0;  
+ax=0.0e0;
+ay=0.0e0;	
+dt=0.0e0;
+point=point+point_hantei(x,y,r);
+game.textbox.value="";
+game.textbox1.value="";
+
+
+reset();
+render();
+animation();
+
+if(count2==4){
+s="GAMESET";
+w=ctx.measureText(s).width;
+x3=x1-w/2;
+y3=canvas.height/2;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x3,y3);
+
+
+s="点数:"+ point + "点";
+w=ctx.measureText(s).width;
+x3=x1-w/2;
+y3=canvas.height/2+30;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x3,y3);
+count2=0;
+
+
+s="retryするときは再開を押してね。";
+w=ctx.measureText(s).width;
+x3=x1-w/2;
+y3=canvas.height/2+60;
+ctx.fillStyle = 'rgba(0, 0, 0)';
+ctx.fillText(s,x3,y3);
+
+
+}
+
+}
+
+vx=vx+ax*dt;
+vy=vy+ay*dt;
+
+
+//要素（円)を描画する。
+ctx.beginPath();
+ctx.arc(x,y,r,0,Math.PI*2, true);
+ctx.fillStyle = 'rgb(0,0,0)';
+ctx.fill();
+
+}
+//render()***************************
+function point_hantei(x,y,r){
+if((x-x1)*(x-x1)+(y-y1)*(y-y1)<=(r+r4)*(r+r4))
+{
+pointx=100;
+}else if((x-x1)*(x-x1)+(y-y1)*(y-y1)<=(r+r3)*(r+r3)&&(x-x1)*(x-x1)+(y-y1)*(y-y1)>(r+r4)*(r+r4))
+{
+pointx=50;
+}else if((x-x1)*(x-x1)+(y-y1)*(y-y1)<=(r+r2)*(r+r2)&&(x-x1)*(x-x1)+(y-y1)*(y-y1)>(r+r3)*(r+r3))
+{
+pointx=30;
+}else if((x-x1)*(x-x1)+(y-y1)*(y-y1)<=(r+r1)*(r+r1)&&(x-x1)*(x-x1)+(y-y1)*(y-y1)>(r+r2)*(r+r2))
+{
+pointx=10;
+}else{
+pointx=0;
+}
+return pointx; 
+}
+
+function reset(){
+//運動に関する変数や定数******************************
+vx=3.0e0*alpha;
+vy=-2.0e0*alpha;
+dt=2.5e-4;
+count=0;
+x=wl+width/2;
+y=canvas.height-30;
+return vx,vy,x,y,count;
+}
+
+
+</script> 
+
+
+</body>
+</html>

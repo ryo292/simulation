@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<h1>モンキーハンティング　ゲーム</h1>
+
+<body>
+
+<form name="velocity">
+
+<h5>・チャレンジは3回まで。</h5>
+<h5>・速度の大きさ，水平面からの角度を入力して、発射!を押すと，赤い玉が発射されるよ。</h5>
+<h5>・発射!を押す前に↑や↓を押すと，得点の倍率が変わるよ。</h5>
+<h5>・玉がぶつかったときの得点×得点の倍率だけ，点数が加算されるよ。</h5>
+
+
+<!--チャレンジ回数が<font color="red">3回</font>になったら、「Ctrl」+「R」を押してください。-->
+<br>
+質点の速さ:<input type="text" name="textbox" size="2">(m/s)
+水平線からの角度:<input type="text" name="textbox1" size="2">(°)
+<input id="button1" type="button" name="button2"  value="発射！" onclick="Sample1()">
+</form>
+
+<form name="time">
+t=<input type="text" name="textbox2" value=0 size="2">(s) 
+</form>
+<form name="position">
+x=<input type="text" name="textbox3"  size="2">(m) 
+y=<input type="text" name="textbox4"  size="2">(m) (赤い玉の位置) <br>
+x2=<input type="text" name="textbox5"  size="2">(m) 
+y2=<input type="text" name="textbox6"  size="2">(m)(青い玉の位置) 
+</form>
+
+<!-- 参考URL http://www.htmq.com/canvas/002.shtml -->
+<!--<canvas>要素の幅と高さ、id名を指定する -->
+ <canvas id="sample" width="600" height="500">
+図形を表示するには、canvasタグをサポートしたブラウザが必要です。
+</canvas>
+
+<script>
+//入力値のテスト
+function Sample1(){
+
+var v = velocity.textbox.value;
+var theta = velocity.textbox1.value;
+count=count+1;
+
+if(count==1){
+var vx =v*Math.cos((theta/180)*Math.PI);
+var vy =-v*Math.sin((theta/180)*Math.PI);
+var vy2=0;
+}else{
+vx=vx1;
+vy=vy1;
+vy2=vy22;
+}
+
+//Canvasを利用できない環境ではスクリプトを実行させない。
+if(canvas.getContext){
+//canvas.getContext('2d')の指定で、描画機能が利用できるように2Dコンテキストを取得
+var context = canvas.getContext('2d');
+
+//要素（α線)を描画する。
+//context.beginPath();
+//context.arc(x1,y1,r2,0,Math.PI*2, true);
+//context.fillStyle = 'rgb(255,0,0)';
+//context.fill();
+
+function animation() {
+
+function render() {
+
+//Canvas全体をクリア************************
+context.clearRect(0,0,w,h);
+context.strokeRect(0,0,w,h);
+
+//Canvas全体をクリア************************
+
+//計算***************
+
+k1=vy*dt;
+k2=(vy+4.9*dt)*dt;
+k3=(vy+4.9*dt)*dt;
+k4=(vy+9.8*dt)*dt;
+k5=(k1+2*k2+2*k3+k4)/6;
+
+l1=vy2*dt;
+l2=(vy2+4.9*dt)*dt;
+l3=(vy2+4.9*dt)*dt;
+l4=(vy2+9.8*dt)*dt;
+l5=(l1+2*l2+2*l3+l4)/6;
+
+x1=x1+vx*10*dt;
+y1=y1+k5*10;
+y2=y2+l5*10;
+
+vy=vy+9.8*dt;
+vy2=vy2+9.8*dt;
+t=t+dt;
+vy1=vy;
+vx1=vx;
+vy22=vy2;
+//計算***************
+
+//座標の表示*********
+document.time.textbox2.value = Math.floor(t*1000)/1000;
+document.position.textbox3.value = Math.floor((x1-100)*10)/100;
+document.position.textbox4.value = -Math.floor((y1-450)*10)/100;
+document.position.textbox5.value = Math.floor((x2-100)*10)/100;
+document.position.textbox6.value = -Math.floor((y2-450)*10)/100;
+//座標の表示*********
+
+
+//衝突判定および点数表示*************************************************************
+
+if(Math.floor((x1-x2))*Math.floor((x1-x2))+Math.floor((y1-y2))*Math.floor((y1-y2))<=4*r2*r2)
+{
+count2=count2+1;
+
+if(count2==1){
+//30点
+if(y1>=y5&&y1<=y5+hc){
+point =point+30*ratio;
+//document.position.textbox7.value =point;
+//30点
+}
+else if(y1>y5+hc&&y1<=y5+hc+hy){
+point =point+10*ratio;
+//document.position.textbox7.value =point;
+//10点
+}
+else if(y1>y5+hc+hy&&y1<=y5+hc+hy+hm){
+point =point+50*ratio;
+//document.position.textbox7.value =point;
+//50点
+}
+else{
+//document.position.textbox7.value =point;
+}
+
+}
+
+}
+
+
+if(x1>=x2)
+{
+count3=count3+1;
+if(count3==1){
+x1=100;
+vx=0;
+vy=0;
+y1=450;
+y2=50;
+vy2=0;
+t=0;
+//座標の表示*********
+document.velocity.textbox.value ="";
+document.velocity.textbox1.value ="";
+document.time.textbox2.value = Math.floor(t*1000)/1000;
+document.position.textbox3.value = Math.floor((x1-100)*10)/100;
+document.position.textbox4.value = -Math.floor((y1-450)*10)/100;
+document.position.textbox5.value = Math.floor((x2-100)*10)/100;
+document.position.textbox6.value = -Math.floor((y2-450)*10)/100;
+//座標の表示*********
+
+document.velocity.button2.value="発射!";
+clearInterval(myInterval);
+count=0;
+count2=0;
+count3=0;
+count4=count4+1;
+
+}
+}
+
+init();
+
+if(count4==3){
+s="GAMESET";
+xg=w/2-60;
+yg=h/2-60;
+context.fillText(s,xg,yg);
+s=point +"点";
+context.fillText(s ,xg+30,yg+50);
+count4=0;
+t=0;
+}
+
+}//render
+
+
+if(count%2==0){ 
+document.velocity.button2.value="再開";
+clearInterval(myInterval);
+}else{
+document.velocity.button2.value="停止";
+myInterval=setInterval(render, 0.000001);
+}
+
+
+}//animation
+animation();
+
+}
+
+}//Sample1
+
+//getElementByIdでid名を指定してHTMLと結び付ける。
+
+
+var canvas = document.getElementById('sample');
+//Canvasを利用できない環境ではスクリプトを実行させない。
+if(canvas.getContext){
+//canvas.getContext('2d')の指定で、描画機能が利用できるように2Dコンテキストを取得
+var context = canvas.getContext('2d');
+
+//w=width, h=height
+var w =600;
+var h =500;
+//r1=原子核の半径
+var r2=1.0e1;
+var x1 =100;
+var y1 =450;
+var vx1;
+var vy1;
+var vy2;
+var vy22;
+var x2 =500;
+var y2 =50;
+var t=0;
+var dt=2.0e-3;
+
+var count=0;
+var point=0;
+var count2=0;
+var count3=0;
+var count4=0;
+var ratio=1;
+var xg;
+var yg;
+
+
+var k1;
+var k2;
+var k3;
+var k4;
+var k5;
+
+var l1;
+var l2;
+var l3;
+var l4;
+var l5;
+
+var xp=10;
+var xp1=210;
+
+var yp=20;
+var yp1=40;
+
+var y5=50;
+
+//cyan
+var hc=100;
+var wc=w;
+
+//yellow
+var hy=200;
+
+wy=wc;
+
+//magenta
+var hm=400-(hc+hy);
+var wm=wc;
+
+var x4=540;
+var x5=75;
+var x6=100;
+
+var y3=50;
+var y4=435;
+}
+
+
+
+
+
+
+
+function init(){
+
+context.clearRect(0,0,w,h);
+//点数表示***********************
+context.font ='15pt Arial';
+context.fillStyle= 'rgba(0,0,0)';
+context.fillText("点数:" + point +"点" ,xp,yp);
+
+context.font ='15pt Arial';
+context.fillStyle= 'rgba(255,0,0)';
+context.fillText("チャレンジ回数:" + count4 +"回" ,xp,yp1);
+
+context.font ='15pt Arial';
+context.fillStyle= 'rgba(0,0,0)';
+context.fillText("得点の倍率:" + ratio +"倍" ,xp1,yp);
+
+
+//点数表示***********************
+
+
+
+//塗りつぶしなしの長方形を書くことで、壁を再現
+
+context.strokeRect(0,0,w,h);
+
+
+//点数ゾーン***************************
+
+const x3=0;
+
+context.globalAlpha=0.30;
+context.fillStyle = "rgb(0, 255, 255)";
+context.fillRect(x3,50,wc,hc);
+context.fillStyle = "rgb(255, 255, 0)";
+context.fillRect(x3,50+hc,wy,hy);
+context.fillStyle = "rgb(255, 0, 255)";
+context.fillRect(x3,50+hc+hy,wm,hm);
+context.globalAlpha=1.0;
+//点数ゾーン***************************
+
+//***********************文字入れ********************************
+//参考URL https://maku77.github.io/js/canvas/text.html
+var canvas = document.getElementById('sample');
+var ctx = canvas.getContext('2d');
+ctx.font ='18pt Arial';
+ctx.fillStyle= 'rgba(0,0,0)';
+ctx.fillText('0m',x5,y3+y4);
+
+var ctx2 = canvas.getContext('2d');
+ctx2.font ='18pt Arial';
+ctx2.fillStyle= 'rgba(0,0,0)';
+ctx2.fillText('10m',x5+x6,y3+y4);
+
+var ctx3 = canvas.getContext('2d');
+ctx3.font ='18pt Arial';
+ctx3.fillStyle= 'rgba(0,0,0)';
+ctx3.fillText('20m',x5+x6*2,y3+y4);
+
+var ctx4 = canvas.getContext('2d');
+ctx4.font ='18pt Arial';
+ctx4.fillStyle= 'rgba(0,0,0)';
+ctx4.fillText('30m',x5+x6*3,y3+y4);
+
+var ctx5 = canvas.getContext('2d');
+ctx5.font ='18pt Arial';
+ctx5.fillStyle= 'rgba(0,0,0)';
+ctx5.fillText('40m',x5+x6*4,y3+y4);
+
+var ctx6 = canvas.getContext('2d');
+ctx6.font ='18pt Arial';
+ctx6.fillStyle= 'rgba(0,0,0)';
+ctx6.fillText('40m',x4,y3);
+
+var ctx7 = canvas.getContext('2d');
+ctx7.font ='18pt Arial';
+ctx7.fillStyle= 'rgba(0,0,0)';
+ctx7.fillText('30m',x4,y3+100);
+
+var ctx8 = canvas.getContext('2d');
+ctx8.font ='18pt Arial';
+ctx8.fillStyle= 'rgba(0,0,0)';
+ctx8.fillText('20m',x4,y3+200);
+
+var ctx9 = canvas.getContext('2d');
+ctx9.font ='18pt Arial';
+ctx9.fillStyle= 'rgba(0,0,0)';
+ctx9.fillText('10m',x4,y3+300);
+
+var ctx10 = canvas.getContext('2d');
+ctx10.font ='18pt Arial';
+ctx10.fillStyle= 'rgba(0,0,0)';
+ctx10.fillText('0m',x4,y3+400);
+
+var w1=(x4+x3)/2;
+context.globalAlpha=0.7;
+var ctx11 = canvas.getContext('2d');
+ctx11.font ='18pt Arial';
+ctx11.fillStyle= 'rgba(0,0,0)';
+ctx11.fillText('30点',w1,y5+hc/2+10);
+
+var ctx12 = canvas.getContext('2d');
+ctx12.font ='18pt Arial';
+ctx12.fillStyle= 'rgba(0,0,0)';
+ctx12.fillText('10点',w1,y5+hc+25+hy/2);
+
+var ctx13 = canvas.getContext('2d');
+ctx13.font ='18pt Arial';
+ctx13.fillStyle= 'rgba(0,0,0)';
+ctx13.fillText('50点',w1,y5+hc+10+hy+hm/2);
+context.globalAlpha=1.0;
+//***********************文字入れ********************************
+
+//質点を描画する。*********************
+context.beginPath();
+context.arc(x1,y1,r2,0,Math.PI*2, true);
+context.fillStyle = 'rgb(255,0,0)';
+context.fill();
+
+//質点を描画する。*********************
+
+context.beginPath();
+context.arc(x2,y2,r2,0,Math.PI*2, true);
+context.fillStyle = 'rgb(0,0,255)';
+context.fill();
+
+
+}
+
+document.position.textbox3.value = Math.floor((x1-100)*10)/100;
+document.position.textbox4.value = -Math.floor((y1-450)*10)/100;
+document.position.textbox5.value = Math.floor((x2-100)*10)/100;
+document.position.textbox6.value = -Math.floor((y2-450)*10)/100;
+
+
+
+init();
+
+document.onkeydown = function(e)
+{
+if(x1==100){
+// onkeydown keycode で検索
+switch( e.keyCode )
+{
+
+case 38://上
+if(y1>50)
+y1=y1-10;
+document.position.textbox4.value = -Math.floor((y1-450)*10)/100;
+break;
+case 40://下
+if(y1<450)
+y1=y1+10;
+document.position.textbox4.value = -Math.floor((y1-450)*10)/100;
+break;
+}
+ratio=Math.floor((3-(Math.abs(y1-250)/100))*10)/10;
+
+init();
+}
+}
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>
